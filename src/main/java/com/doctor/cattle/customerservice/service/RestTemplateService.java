@@ -11,7 +11,7 @@ public class RestTemplateService {
 	private RestTemplate restTemplate;
 	
 	protected <T extends Object> T getForObject(String serviceName,String url,Class<T> returnType) {
-		return   (T) restTemplate.getForObject("http://"+serviceName+url, returnType);
+		return   (T) restTemplate.getForObject("https://"+serviceName+url, returnType);
 
 	}
 }

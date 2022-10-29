@@ -70,7 +70,7 @@ public class FarmServiceImpl extends RestTemplateService implements FarmService 
 	@Override
 	public GetLiveStockResponse getLiveStock(Long farmId) throws FarmNotFoundException {
 		if (isFarmExists(farmId)) {
-			GetLiveStockResponse response = getForObject("CATTLE-SERVICE", "/api/cattle-service/get-live-stock/"+farmId,
+			GetLiveStockResponse response = getForObject("CATTLE_SERVICE", "/api/cattle-service/get-live-stock/"+farmId,
 					GetLiveStockResponse.class);
 			return response;
 		}

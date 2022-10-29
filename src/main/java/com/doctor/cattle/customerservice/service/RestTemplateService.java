@@ -7,11 +7,18 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class RestTemplateService {
 
-	@Autowired
+//	@Autowired
+//	private RestTemplate restTemplate;
+//	
 	private RestTemplate restTemplate;
-	
+    
+	public RestTemplateService() {
+		restTemplate = new RestTemplate();
+	}
 	protected <T extends Object> T getForObject(String serviceName,String url,Class<T> returnType) {
-		return   (T) restTemplate.getForObject("https://"+serviceName+url, returnType);
+		return   (T) restTemplate.getForObject("https://"+url, returnType);
+
+		//return   (T) restTemplate.getForObject("https://"+serviceName+url, returnType);
 
 	}
 }

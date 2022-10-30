@@ -20,6 +20,7 @@ public class CompanyOwnerAdapter {
 		company_Owner.setId(companyOwnerDTO.getId());
 		company_Owner.setFirstName(companyOwnerDTO.getFirstName());
 		company_Owner.setLastName(companyOwnerDTO.getLastName());
+		company_Owner.setPhoneNumber(companyOwnerDTO.getPhoneNumber());
 		if (companyOwnerDTO .getPassword() != null) {
 		company_Owner.setPassword(companyOwnerDTO.getPassword());
 		}

@@ -15,7 +15,7 @@ import com.doctor.cattle.customerservice.entity.role.Role;
 
 public class UserAdapter {
 
-	public UserDTO getUserDTO(CompanyOwner owner) {
+	public UserDTO getUserDTO(CompanyOwner owner,Boolean getFarms) {
 
 		if (owner == null) {
 			return null;
@@ -43,7 +43,8 @@ public class UserAdapter {
 		if (null != owner.getId()) {
 			dto.setId(owner.getId());
 		}
-
+		
+		if (getFarms == true) {
 		if (null != owner.getFarms()) {
 			FarmAdapter adapter = new FarmAdapter();
 			List<Farm_DTO> farms = new ArrayList<>();
@@ -52,6 +53,7 @@ public class UserAdapter {
 			});
 			dto.setFarms(farms);
 		}
+		}
 
 		dto.setIsOwner(true);
 		
@@ -59,11 +61,12 @@ public class UserAdapter {
 		CompanyDTO companyDTO = company_Adapter.getCompanyDTO(owner.getCompany());
 		dto.setCompany(companyDTO);
 		dto.setAccessGranted(owner.getaccessGranted());
+		dto.setPhoneNumber(owner.getPhoneNumber());
 		return dto;
 
 	}
 
-	public UserDTO getUserDTO(FarmUser farm_user) {
+	public UserDTO getUserDTO(FarmUser farm_user,Boolean getFarms) {
 
 		if (farm_user == null) {
 			return null;
@@ -92,6 +95,7 @@ public class UserAdapter {
 			dto.setId(farm_user.getId());
 		}
 
+		if(getFarms == true) {
 		if (null != farm_user.getFarm()) {
 			FarmAdapter adapter = new FarmAdapter();
 			List<Farm_DTO> farms = new ArrayList<>();
@@ -99,13 +103,14 @@ public class UserAdapter {
 
 			dto.setFarms(farms);
 		}
-
+		}
 		if (null != farm_user.getIsOwner()) {
 			dto.setIsOwner(farm_user.getIsOwner());
 		}
 		Company_Adapter companyAdapter = new Company_Adapter();
 		dto.setCompany(companyAdapter.getCompanyDTO(farm_user.getFarm().getCompany()));
 		dto.setAccessGranted(farm_user.getaccessGrantedd());
+		dto.setPhoneNumber(farm_user.getPhoneNumber());
 		return dto;
 
 	}
@@ -134,6 +139,7 @@ public class UserAdapter {
 		owner.setLastName(dto.getLastName());
 		owner.setRole(Role.OWNER);
 		owner.setUserName(dto.getUserName());
+		owner.setPhoneNumber(dto.getPhoneNumber());
 		return owner;
 	}
 
@@ -155,6 +161,7 @@ public class UserAdapter {
 		
 		user.setFirstName(dto.getFirstName());
 		user.setLastName(dto.getLastName());
+		user.setPhoneNumber(dto.getPhoneNumber());
 		user.setRole(Role.USER);
 		user.setUserName(dto.getUserName());
 		return user;

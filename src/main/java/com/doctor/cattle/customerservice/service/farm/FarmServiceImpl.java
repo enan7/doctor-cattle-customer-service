@@ -1,5 +1,6 @@
 package com.doctor.cattle.customerservice.service.farm;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -12,14 +13,17 @@ import com.doctor.cattle.customerservice.controller.response.livestock.GetLiveSt
 import com.doctor.cattle.customerservice.dto.farm.Farm_DTO;
 import com.doctor.cattle.customerservice.dto.farm.livestock.LiveStockDTO;
 import com.doctor.cattle.customerservice.dto.farm_user.Farm_User_DTO;
+import com.doctor.cattle.customerservice.dto.user.UserDTO;
 import com.doctor.cattle.customerservice.entity.company_owner.CompanyOwner;
 import com.doctor.cattle.customerservice.entity.farm.Farm;
 import com.doctor.cattle.customerservice.entity.role.Role;
 import com.doctor.cattle.customerservice.exception.farm.FarmNotFoundException;
 import com.doctor.cattle.customerservice.exception.farm.FarmRegistrationException;
+import com.doctor.cattle.customerservice.exception.user.UserNotFoundException;
 import com.doctor.cattle.customerservice.repository.CompanyOwnerRepository;
 import com.doctor.cattle.customerservice.repository.FarmRepository;
 import com.doctor.cattle.customerservice.service.RestTemplateService;
+import com.doctor.cattle.customerservice.service.UrlMapper;
 import com.doctor.cattle.customerservice.service.user.UserService;
 
 @Service
@@ -63,20 +67,40 @@ public class FarmServiceImpl extends RestTemplateService implements FarmService 
 	}
 
 	@Override
-	public boolean isFarmExists(Long farmId) {
-		return farmRepository.countById(farmId) > 0;
+	public Boolean isFarmExists(Long farmId) {
+		return farmRepository.countById(farmId)>0;
+	}
+
+	@Override
+	public Boolean isFarmExists(Long farmId,boolean updateLiveStock) {
+		Optional<Farm> farm =  farmRepository.findById(farmId);
+		Boolean exists = farm!=null;
+		if(exists) {
+			if(updateLiveStock) {
+				updateLiveStockBy(1, farm.get());
+			}
+		}
+		
+		return exists;
 	}
 
 	@Override
 	public GetLiveStockResponse getLiveStock(Long farmId) throws FarmNotFoundException {
 		if (isFarmExists(farmId)) {
-			GetLiveStockResponse response = getForObject("CATTLE_SERVICE", "doctor-cattle-cattle-service.herokuapp.com/api/cattle-service/get-live-stock/"+farmId,
-					GetLiveStockResponse.class);
+			GetLiveStockResponse response = getForObject(UrlMapper.GETLIVESTOCK,farmId,GetLiveStockResponse.class);
 			return response;
 		}
 		throw new FarmNotFoundException("Unable to found farm with id : "+farmId);
 	}
 
+	@Override
+	public List<Farm_DTO> getAllFarms(Long userId) throws UserNotFoundException {
+			UserDTO user = userService.finById(userId,true);
+			if(user == null ) {
+				throw new UserNotFoundException("Unable to find user with id : "+userId);
+			}
+			return user.getFarms();
+	}
 	private boolean validFarm(Farm_DTO farmDTO) throws FarmRegistrationException {
 
 		AtomicReference<String> message = new AtomicReference<>("");
@@ -131,6 +155,11 @@ public class FarmServiceImpl extends RestTemplateService implements FarmService 
 				.findAny();
 
 		return farmToFound.isPresent();
+	}
+
+	private Farm updateLiveStockBy(int count,Farm farm) {
+		farm.setLiveStock(farm.getLiveStock()+count);
+		return farmRepository.save(farm);
 	}
 
 }

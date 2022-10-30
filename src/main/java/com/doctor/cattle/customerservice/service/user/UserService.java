@@ -12,7 +12,7 @@ public interface UserService {
 	
 	public UserDTO login(String userName, String password) throws AccessDeniedException;
 	
-	public UserDTO finById(Long id);
+	public UserDTO finById(Long id,Boolean getFarms);
 	
 	public boolean checkAccesAllowed(String userName) throws AccessDeniedException;
 	

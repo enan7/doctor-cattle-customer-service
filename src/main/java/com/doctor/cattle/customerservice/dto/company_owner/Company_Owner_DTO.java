@@ -48,6 +48,8 @@ public class Company_Owner_DTO {
 	@Setter
 	private Access accessGranted = Access.GRANTED;
 
-	
+	@Getter
+	@Setter
+	private String phoneNumber;
 
 }

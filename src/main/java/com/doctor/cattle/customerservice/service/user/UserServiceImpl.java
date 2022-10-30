@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
 				return null;
 			}
 			if (checkAccesAllowed(userName)) {
-				return adapter.getUserDTO(user);
+				return adapter.getUserDTO(user,false);
 			}
 		}
 		passwordMatched = encoder.matches(password, owner.getPassword());
@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
 			return null;
 		}
 		if (checkAccesAllowed(userName)) {
-			return adapter.getUserDTO(owner);
+			return adapter.getUserDTO(owner,false);
 		}
 		}catch (Exception e) {
 			throw e;
@@ -91,16 +91,16 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserDTO finById(Long id) {
+	public UserDTO finById(Long id,Boolean getFarms) {
 		Optional<CompanyOwner> owner = companyOwnerRepository.findById(id);
 		UserAdapter adapter = new UserAdapter();
 		if (owner.isPresent()) {
-			return adapter.getUserDTO(owner.get());
+			return adapter.getUserDTO(owner.get(),getFarms);
 		}
 
 		Optional<FarmUser> farmUser = farmUserRepository.findById(id);
 		if (farmUser.isPresent()) {
-			return adapter.getUserDTO(farmUser.get());
+			return adapter.getUserDTO(farmUser.get(),getFarms);
 		}
 		return null;
 	}
@@ -142,7 +142,7 @@ public class UserServiceImpl implements UserService {
 		UserAdapter adapter = new UserAdapter();
 
 		if (null != owner) {
-			return adapter.getUserDTO(owner);
+			return adapter.getUserDTO(owner,true);
 		}
 		return null;
 	}
@@ -152,7 +152,7 @@ public class UserServiceImpl implements UserService {
 		UserAdapter adapter = new UserAdapter();
 
 		if (null != user) {
-			return adapter.getUserDTO(user);
+			return adapter.getUserDTO(user,true);
 		}
 		return null;
 	}

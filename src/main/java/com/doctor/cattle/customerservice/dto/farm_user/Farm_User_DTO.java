@@ -30,6 +30,8 @@ public class Farm_User_DTO {
 	private Farm_DTO farm;
 	
 	private Access accessGranted = Access.GRANTED;
+	
+	private String phoneNumber;
 
 
 }

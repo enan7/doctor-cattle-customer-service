@@ -24,7 +24,7 @@ public class UserDTO {
 	private CompanyDTO company;
 	private String jwt_Token;
 	private Access accessGranted = Access.GRANTED;
-
+	private String phoneNumber;
 	
 
 }

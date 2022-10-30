@@ -1,5 +1,7 @@
 package com.doctor.cattle.customerservice.controller.farm;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.doctor.cattle.customerservice.controller.response.farm.GetFarmsResponse;
 import com.doctor.cattle.customerservice.controller.response.livestock.GetLiveStockResponse;
+import com.doctor.cattle.customerservice.dto.farm.Farm_DTO;
 import com.doctor.cattle.customerservice.exception.farm.FarmNotFoundException;
+import com.doctor.cattle.customerservice.exception.user.UserNotFoundException;
 import com.doctor.cattle.customerservice.service.farm.FarmService;
 
 @RestController
@@ -42,5 +47,23 @@ public class FarmController {
 		
 		return new ResponseEntity<GetLiveStockResponse>(response,response.getStatus());
 		
+	}
+	
+	@GetMapping(value = "getFarms/{userId}")
+	public ResponseEntity<GetFarmsResponse> getFarms(@PathVariable(value = "userId", required = true) Long userId) {
+		List<Farm_DTO> farms;
+		GetFarmsResponse response = null;
+		try {
+			farms = farmService.getAllFarms(userId);
+			response = new GetFarmsResponse(HttpStatus.OK, "Farms Found", farms);
+		} catch (UserNotFoundException e) {
+			response = new GetFarmsResponse(HttpStatus.BAD_REQUEST, e.getMessage(), null);
+			logger.error("Exception in get Farms : " + e.getMessage());
+
+		} catch (Exception e) {
+			response = new GetFarmsResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to get farms", null);
+			logger.error("Exception in get Farms : " + e.getMessage());
+		}
+		return new ResponseEntity<GetFarmsResponse>(response, response.getStatus());
 	}
 }

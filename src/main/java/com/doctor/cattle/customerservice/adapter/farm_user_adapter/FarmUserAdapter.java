@@ -26,6 +26,7 @@ public class FarmUserAdapter {
 		
 		farmUser.setFirstName(farmUserDto.getFirstName());
 		farmUser.setLastName(farmUserDto.getLastName());
+		farmUser.setPhoneNumber(farmUserDto.getPhoneNumber());
 		farmUser.setIsOwner(false);
 		if(farmUserDto.getIsOwner() != null) {
 			farmUser.setIsOwner(farmUserDto.getIsOwner());

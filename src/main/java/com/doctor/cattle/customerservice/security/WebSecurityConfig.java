@@ -82,7 +82,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.authorizeRequests()
 				.antMatchers("/api/customer-service/company/register").permitAll()
 				.antMatchers("/api/customer-service/login").permitAll()
-				.antMatchers("/api/customer-service/company/farm-exists/*").permitAll()
+				.antMatchers("/api/customer-service/company/farm-exists").permitAll()
 				.antMatchers("/api/customer-service/company/add-farm").hasAnyAuthority(Role.OWNER.getDescription())
 				.antMatchers("/api/customer-service/farm-user/register").hasAnyAuthority(Role.OWNER.getDescription())
 				.antMatchers("/api/customer-service/farm-user/invertAccess").hasAnyAuthority(Role.OWNER.getDescription())

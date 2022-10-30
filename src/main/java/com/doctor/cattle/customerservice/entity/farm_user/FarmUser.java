@@ -57,6 +57,10 @@ public class FarmUser {
 	@JoinColumn(name="farm_id")
 	private Farm farm;
 
+
+    @Column(name=PREFIX + "phone_number")
+	private String phoneNumber ;
+	
 	public Long getId() {
 		return id;
 	}
@@ -135,6 +139,14 @@ public class FarmUser {
 
 	public void setaccessGrantedd(Access accessGranted) {
 		this.accessGrantedd = accessGranted;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 	
 	

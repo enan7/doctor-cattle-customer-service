@@ -16,9 +16,13 @@ public class RestTemplateService {
 		restTemplate = new RestTemplate();
 	}
 	protected <T extends Object> T getForObject(String serviceName,String url,Class<T> returnType) {
-		return   (T) restTemplate.getForObject("https://"+url, returnType);
 
-		//return   (T) restTemplate.getForObject("https://"+serviceName+url, returnType);
+		return   (T) restTemplate.getForObject("https://"+serviceName+url, returnType);
+
+	}
+	
+	protected <T extends Object> T getForObject(UrlMapper urlMapper,Object parameter,Class<T> returnType) {
+		return   (T) restTemplate.getForObject(urlMapper.getUrl()+parameter ,returnType);
 
 	}
 }

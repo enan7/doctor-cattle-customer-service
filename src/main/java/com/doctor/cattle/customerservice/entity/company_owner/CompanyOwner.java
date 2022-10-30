@@ -60,6 +60,9 @@ public class CompanyOwner {
 	@Column(name=PREFIX + "access_granted")
 	private Access accessGranted = Access.GRANTED ;
 
+	@Column(name=PREFIX + "phoneNumber")
+	private String phoneNumber  ;
+	
 	public Long getId() {
 		return id;
 	}
@@ -152,6 +155,16 @@ public class CompanyOwner {
 
 	public void setaccessGranted(Access accessGranted) {
 		this.accessGranted = accessGranted;
+	}
+
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 	
 	

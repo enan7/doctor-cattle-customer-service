@@ -74,7 +74,10 @@ public class FarmServiceImpl extends RestTemplateService implements FarmService 
 	@Override
 	public Boolean isFarmExists(Long farmId,boolean updateLiveStock) {
 		Optional<Farm> farm =  farmRepository.findById(farmId);
-		Boolean exists = farm!=null;
+		Boolean exists = false;
+		if(null!=farm) {
+			exists = farm.get()!=null;
+		}
 		if(exists) {
 			if(updateLiveStock) {
 				updateLiveStockBy(1, farm.get());

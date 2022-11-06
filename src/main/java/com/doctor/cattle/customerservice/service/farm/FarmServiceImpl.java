@@ -101,6 +101,19 @@ public class FarmServiceImpl extends RestTemplateService implements FarmService 
 			}
 			return user.getFarms();
 	}
+	
+	@Override
+	public Farm_DTO deleteFarm(Long farmId) throws FarmNotFoundException {
+		Optional<Farm> farm = farmRepository.findById(farmId);
+		if(farm.isPresent()) {
+			FarmAdapter adapter = new FarmAdapter();
+			farmRepository.delete(farm.get());
+			return adapter.getFarmDTO(farm.get());
+		} else {
+			throw new FarmNotFoundException("Farm with Id : "+farmId + "not found");
+		}
+	}
+	
 	private boolean validFarm(Farm_DTO farmDTO) throws FarmRegistrationException {
 
 		AtomicReference<String> message = new AtomicReference<>("");
@@ -161,5 +174,7 @@ public class FarmServiceImpl extends RestTemplateService implements FarmService 
 		farm.setLiveStock(farm.getLiveStock()+count);
 		return farmRepository.save(farm);
 	}
+
+	
 
 }

@@ -20,4 +20,6 @@ public interface FarmService {
 	public GetLiveStockResponse getLiveStock(Long farmId) throws FarmNotFoundException;
 	
 	public List<Farm_DTO> getAllFarms (Long userId) throws UserNotFoundException;
+	
+	public Farm_DTO deleteFarm(Long farmId) throws FarmNotFoundException;
 }

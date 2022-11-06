@@ -7,12 +7,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.doctor.cattle.customerservice.controller.response.BaseResponse;
 import com.doctor.cattle.customerservice.controller.response.farm.GetFarmsResponse;
 import com.doctor.cattle.customerservice.controller.response.livestock.GetLiveStockResponse;
 import com.doctor.cattle.customerservice.dto.farm.Farm_DTO;
@@ -65,5 +67,24 @@ public class FarmController {
 			logger.error("Exception in get Farms : " + e.getMessage());
 		}
 		return new ResponseEntity<GetFarmsResponse>(response, response.getStatus());
+	}
+	
+	@DeleteMapping(value="/{farmId}",produces="application/json")
+	public ResponseEntity<BaseResponse> deleteFarm(@PathVariable(value="farmId") Long farmId){
+		BaseResponse response = null;
+		try {
+			Farm_DTO farm = farmService.deleteFarm(farmId);
+			if (null !=farm) {
+			response = new BaseResponse(HttpStatus.OK,"Farm Deleted Successfully");
+			}else {
+				response = new BaseResponse(HttpStatus.BAD_REQUEST,"Farm Not Found");
+			}
+			} catch (FarmNotFoundException e) {
+				response = new BaseResponse(HttpStatus.BAD_REQUEST,e.getMessage());
+				logger.error("Error in Delete Farm : "+e.toString());
+
+		}
+		return new ResponseEntity<BaseResponse>(response,response.getStatus());
+		
 	}
 }

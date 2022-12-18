@@ -29,6 +29,7 @@ public class FarmUserController {
 	@Autowired
 	private FarmUserService farmUserService;
 
+	
 	@PostMapping(value = "register")
 	public ResponseEntity<FarmUserRegistrationResponse> registerUser(@RequestBody FarmUserRegistrationRequest request) {
 

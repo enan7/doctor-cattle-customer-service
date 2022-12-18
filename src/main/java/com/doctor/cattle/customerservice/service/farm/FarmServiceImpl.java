@@ -46,7 +46,7 @@ public class FarmServiceImpl extends RestTemplateService implements FarmService 
 				Farm farm = adapter.getFarm(farmDTO);
 				CompanyOwner owner = getCompnayOwner(farmDTO.getOwner().getId());
 				if (owner == null) {
-					throw new FarmRegistrationException("Unable to find owener");
+					throw new FarmRegistrationException("Unable to find owner");
 				} else if (owner.getRole() != Role.OWNER) {
 					throw new FarmRegistrationException("Only farm owners are allowed to register a farm");
 				}
@@ -151,7 +151,8 @@ public class FarmServiceImpl extends RestTemplateService implements FarmService 
 
 	private CompanyOwner getCompnayOwner(Long id) {
 		Optional<CompanyOwner> owner = companyOwnerRepository.findById(id);
-		return owner.get();
+		return owner.isPresent()?
+				owner.get():null;
 	}
 
 	private boolean farmAlreadyExists(CompanyOwner owner, String farmName) throws FarmRegistrationException {

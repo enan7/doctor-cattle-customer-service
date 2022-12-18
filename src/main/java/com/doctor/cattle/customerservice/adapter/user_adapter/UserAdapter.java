@@ -108,7 +108,9 @@ public class UserAdapter {
 			dto.setIsOwner(farm_user.getIsOwner());
 		}
 		Company_Adapter companyAdapter = new Company_Adapter();
+		if(null != farm_user.getFarm()) {
 		dto.setCompany(companyAdapter.getCompanyDTO(farm_user.getFarm().getCompany()));
+		}
 		dto.setAccessGranted(farm_user.getaccessGrantedd());
 		dto.setPhoneNumber(farm_user.getPhoneNumber());
 		return dto;

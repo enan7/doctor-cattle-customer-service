@@ -17,4 +17,7 @@ public interface UserService {
 	public boolean checkAccesAllowed(String userName) throws AccessDeniedException;
 	
 	public UserDTO getUserInSession();
+	
+	public Long getIdByUserName(String userName);
+	
 }

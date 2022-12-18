@@ -2,6 +2,8 @@ package com.doctor.cattle.customerservice.controller.farm;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,15 +13,14 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.doctor.cattle.customerservice.controller.response.BaseResponse;
 import com.doctor.cattle.customerservice.controller.response.farm.GetFarmsResponse;
 import com.doctor.cattle.customerservice.controller.response.livestock.GetLiveStockResponse;
 import com.doctor.cattle.customerservice.dto.farm.Farm_DTO;
 import com.doctor.cattle.customerservice.exception.farm.FarmNotFoundException;
 import com.doctor.cattle.customerservice.exception.user.UserNotFoundException;
+import com.doctor.cattle.customerservice.security.JwtTokenUtil;
 import com.doctor.cattle.customerservice.service.farm.FarmService;
 
 @RestController
@@ -31,6 +32,10 @@ public class FarmController {
 	@Autowired
 	private FarmService farmService;
 
+	@Autowired
+	private JwtTokenUtil jwtTokenUtil;
+	
+	
 	@GetMapping(value="get-animals/{farmId}")
 	public ResponseEntity<GetLiveStockResponse> getLiveStock(@PathVariable(value="farmId") Long farmId){
 		
@@ -51,11 +56,12 @@ public class FarmController {
 		
 	}
 	
-	@GetMapping(value = "getFarms/{userId}")
-	public ResponseEntity<GetFarmsResponse> getFarms(@PathVariable(value = "userId", required = true) Long userId) {
+	@GetMapping(value = "getFarms")
+	public ResponseEntity<GetFarmsResponse> getFarms(HttpServletRequest httpRequest) {
 		List<Farm_DTO> farms;
 		GetFarmsResponse response = null;
 		try {
+			Long userId = jwtTokenUtil.getUserIdFromToken(httpRequest);
 			farms = farmService.getAllFarms(userId);
 			response = new GetFarmsResponse(HttpStatus.OK, "Farms Found", farms);
 		} catch (UserNotFoundException e) {
@@ -87,4 +93,6 @@ public class FarmController {
 		return new ResponseEntity<BaseResponse>(response,response.getStatus());
 		
 	}
+	
+
 }

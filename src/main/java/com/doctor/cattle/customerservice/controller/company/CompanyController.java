@@ -1,6 +1,8 @@
 package com.doctor.cattle.customerservice.controller.company;
 
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +24,11 @@ import com.doctor.cattle.customerservice.controller.request.farm.IsFarmExistsReq
 import com.doctor.cattle.customerservice.controller.response.company_registration.CompanyRegistrationResponse;
 import com.doctor.cattle.customerservice.controller.response.farm.AddFarmResponse;
 import com.doctor.cattle.customerservice.dto.company.CompanyDTO;
+import com.doctor.cattle.customerservice.dto.company_owner.Company_Owner_DTO;
 import com.doctor.cattle.customerservice.dto.farm.Farm_DTO;
 import com.doctor.cattle.customerservice.exception.company.CompanyRegisterationException;
 import com.doctor.cattle.customerservice.exception.farm.FarmRegistrationException;
+import com.doctor.cattle.customerservice.security.JwtTokenUtil;
 import com.doctor.cattle.customerservice.service.company.CompanyService;
 import com.doctor.cattle.customerservice.service.farm.FarmService;
 
@@ -40,6 +44,9 @@ public class CompanyController {
 	@Autowired
 	private FarmService farmService;
 
+	@Autowired
+	private JwtTokenUtil jwtTokenUtil;
+	
 	@PostMapping(value = "register")
 	public ResponseEntity<CompanyRegistrationResponse> registerCompany(
 			@RequestBody CompanyRegistrationRequest request) {
@@ -66,9 +73,18 @@ public class CompanyController {
 	}
 
 	@PostMapping(value = "add-farm")
-	public ResponseEntity<AddFarmResponse> addFarm(@RequestBody AddFarmRequest request) {
+	public ResponseEntity<AddFarmResponse> addFarm(@RequestBody AddFarmRequest request,HttpServletRequest httprequest) {
 		AddFarmResponse response = null;
 		try {
+			Farm_DTO farm = (Farm_DTO) request;
+			if(farm.getOwner() == null || farm.getOwner().getId() == null) {
+				Company_Owner_DTO farmOwner = farm.getOwner();
+				if(farmOwner == null) {
+					farmOwner = new Company_Owner_DTO();
+				}
+				farmOwner.setId(jwtTokenUtil.getUserIdFromToken(httprequest));
+				request.setOwner(farmOwner);
+			}
 			Farm_DTO dto = farmService.addFarm((Farm_DTO) request);
 			if (null != dto) {
 				response = new AddFarmResponse(HttpStatus.OK, "Farm Added Successfully", dto.getId());

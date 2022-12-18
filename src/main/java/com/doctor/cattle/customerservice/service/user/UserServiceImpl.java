@@ -109,7 +109,9 @@ public class UserServiceImpl implements UserService {
 	public boolean checkAccesAllowed(String userName) throws AccessDeniedException {
 		// TODO Auto-generated method stub
 		UserDTO dto = findByUserName(userName);
-
+		if (dto.getCompany() == null) {
+			throw new AccessDeniedException("No Company is being associated with user : " +userName + " Bad Data");
+		}
 		if (null != dto) {
 			if (dto.getAccessGranted() != Access.GRANTED) {
 				throw new AccessDeniedException("No Access Allowed to user : " + userName);
@@ -137,16 +139,23 @@ public class UserServiceImpl implements UserService {
 		return false;
 	}
 
-	private UserDTO getCompanyOwner(String userName) {
-		CompanyOwner owner = companyOwnerRepository.findByUserName(userName);
-		UserAdapter adapter = new UserAdapter();
-
-		if (null != owner) {
-			return adapter.getUserDTO(owner,true);
+	@Override
+	public UserDTO getUserInSession() {
+		Authentication authentication =  (Authentication) SecurityContextHolder.getContext().getAuthentication();
+		if (null != authentication) {
+		return findByUserName(authentication.getName());
 		}
 		return null;
 	}
 
+	@Override
+	public Long getIdByUserName(String userName) {
+		Long userId = getFarmUserId(userName);
+		if(null== userId) {
+			return getCompanyOwnerId(userName);
+		}
+		return userId;
+	}
 	private UserDTO getFarmUser(String userName) {
 		FarmUser user = farmUserRepository.findByUserName(userName);
 		UserAdapter adapter = new UserAdapter();
@@ -157,13 +166,23 @@ public class UserServiceImpl implements UserService {
 		return null;
 	}
 
-	@Override
-	public UserDTO getUserInSession() {
-		Authentication authentication =  (Authentication) SecurityContextHolder.getContext().getAuthentication();
-		if (null != authentication) {
-		return findByUserName(authentication.getName());
+	private UserDTO getCompanyOwner(String userName) {
+		CompanyOwner owner = companyOwnerRepository.findByUserName(userName);
+		UserAdapter adapter = new UserAdapter();
+
+		if (null != owner) {
+			return adapter.getUserDTO(owner,true);
 		}
 		return null;
+	}
+
+	private Long getFarmUserId(String userName) {
+		return farmUserRepository.getUserIdByUserName(userName);
+	}
+
+	private Long getCompanyOwnerId(String userName) {
+		return companyOwnerRepository.getUserIdByUserName(userName);
+
 	}
 
 }

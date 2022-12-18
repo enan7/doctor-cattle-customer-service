@@ -7,9 +7,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+
+import com.doctor.cattle.customerservice.service.user.UserService;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -25,6 +30,8 @@ public class JwtTokenUtil implements Serializable {
 	
 	private String secret="doctor-cattle";
 
+	@Autowired
+	private UserService userservice;
 	//retrieve username from jwt token
 	public String getUsernameFromToken(String token) {
 		return getClaimFromToken(token, Claims::getSubject);
@@ -72,5 +79,21 @@ public class JwtTokenUtil implements Serializable {
 	public Boolean validateToken(String token, UserDetails userDetails) {
 		final String username = getUsernameFromToken(token);
 		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+	}
+	
+	private String getUserNameFromToken(HttpServletRequest httprequest) {
+
+		final String requestTokenHeader = httprequest.getHeader("Authorization");
+		String jwtToken = requestTokenHeader.substring(7);
+		return getUsernameFromToken(jwtToken);
+	}
+	
+	public Long getUserIdFromToken(HttpServletRequest httprequest) {
+
+		final String requestTokenHeader = httprequest.getHeader("Authorization");
+		String jwtToken = requestTokenHeader.substring(7);
+	    String userName = getUsernameFromToken(jwtToken);
+	    Long userId = userservice.getIdByUserName(userName);
+	    return userId;
 	}
 }
